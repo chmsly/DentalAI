@@ -28,4 +28,10 @@ public class AuthController {
         }
         return ResponseEntity.status(401).body("Invalid credentials");
     }
+
+    @GetMapping("/logout")
+    public ResponseEntity<?> logoutUser() {
+        // Logout logic here
+        return ResponseEntity.ok("User logged out successfully");
+    }
 }
