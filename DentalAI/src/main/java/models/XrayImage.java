@@ -36,4 +36,10 @@ public class XrayImage {
     public void setS3Url(String s3Url) {
         this.s3Url = s3Url;
     }
+
+    public XrayImage(String id, String userId, String s3Url) {
+        this.id = id;
+        this.userId = userId;
+        this.s3Url = s3Url;
+    }
 }
