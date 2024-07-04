@@ -28,7 +28,12 @@ public class XrayService {
         String s3Url = amazonS3.getUrl(bucketName, fileName).toString();
 
 
-
         return s3Url;
+    }
+    public void saveXray(XrayImage xrayImage) {
+        xrayRepository.save(xrayImage);
+    }
+    public XrayImage findById(String id) {
+        return xrayRepository.findById(id).orElse(null);
     }
 }
