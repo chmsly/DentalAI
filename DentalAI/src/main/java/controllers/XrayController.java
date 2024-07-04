@@ -40,5 +40,5 @@ public class XrayController {
         return ResponseEntity.ok("Results retrieved successfully");
     }
 
-
+    @PostMapping("/results/{patientId}/{xrayId}")
 }
