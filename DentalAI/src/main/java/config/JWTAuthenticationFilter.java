@@ -34,4 +34,9 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .compact();
         res.addHeader("Authorization", "Bearer " + token);
     }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage());
+    }
 }
