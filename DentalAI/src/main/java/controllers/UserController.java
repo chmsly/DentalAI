@@ -23,4 +23,6 @@ public class UserController {
         // Authentication logic
         return ResponseEntity.ok("User logged in successfully");
     }
+
+    @PostMapping("/logout")
 }
