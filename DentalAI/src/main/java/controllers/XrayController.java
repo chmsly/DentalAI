@@ -41,4 +41,8 @@ public class XrayController {
     }
 
     @PostMapping("/results/{patientId}/{xrayId}")
+    public ResponseEntity<?> getResultsByXrayId(@PathVariable("patientId") String patientId, @PathVariable("xrayId") String xrayId) {
+        // Retrieve results from DynamoDB based on X-ray ID
+        return ResponseEntity.ok("Results retrieved successfully");
+    }
 }
