@@ -19,4 +19,9 @@ public class Auth {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public Auth(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 }
