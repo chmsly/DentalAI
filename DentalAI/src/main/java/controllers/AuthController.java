@@ -34,4 +34,10 @@ public class AuthController {
         // Logout logic here
         return ResponseEntity.ok("User logged out successfully");
     }
+
+    @GetMapping("/user/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable("id") String id) {
+        User user = userService.findById(id);
+        return ResponseEntity.ok(user);
+    }
 }
