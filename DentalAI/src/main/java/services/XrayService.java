@@ -36,4 +36,8 @@ public class XrayService {
     public XrayImage findById(String id) {
         return xrayRepository.findById(id).orElse(null);
     }
+
+    public XrayImage findByUserId(String userId) {
+        return xrayRepository.findByUserId(userId);
+    }
 }
