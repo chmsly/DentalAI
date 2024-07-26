@@ -17,3 +17,18 @@ class Dashboard extends React.Component {
     event.preventDefault();
     // Handle file upload and comparison logic here
   }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Upload X-ray:
+          <input type="file" onChange={this.handleFileChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+    );
+  }
+}
+
+export default Dashboard;
