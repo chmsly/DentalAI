@@ -22,10 +22,9 @@ class PatientDashboard extends React.Component {
   }
 
   handlePatientSelect(patient) {
-    this.setState({selectedPatient: patient});
-    // create logic to display patient details
-
-
+    fetchPatientDetails(patient.id)
+      .then(details => this.setState({selectedPatient: {...patient, details}}))
+      .catch(error => console.error(error));
   }
   
   render() {
