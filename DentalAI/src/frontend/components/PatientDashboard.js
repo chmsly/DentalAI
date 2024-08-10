@@ -3,7 +3,16 @@ import React from 'react';
 class PatientDashboard extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {searchTerm: '', patients: [], selectedPatient: null};
+    this.state = {
+      searchTerm: '',
+      patients: [],
+      selectedPatient: null,
+      currentPage: 1,
+      patientsPerPage: 10,
+      sortField: 'name',
+      isLoading: false,
+      error: null
+    };
 
     this.handleSearchChange = this.handleSearchChange.bind(this);
     this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
