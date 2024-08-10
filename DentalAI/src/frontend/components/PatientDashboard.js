@@ -19,8 +19,12 @@ class PatientDashboard extends React.Component {
     this.handlePatientSelect = this.handlePatientSelect.bind(this);
   }
 
-  handleSearchChange(event) {
-    this.setState({searchTerm: event.target.value});
+  handleSearchSubmit(event) {
+    event.preventDefault();
+    this.setState({isLoading: true});
+    searchPatients(this.state.searchTerm)
+      .then(patients => this.setState({patients, isLoading: false}))
+      .catch(error => this.setState({error, isLoading: false}));
   }
 
   handleSearchSubmit(event) {
