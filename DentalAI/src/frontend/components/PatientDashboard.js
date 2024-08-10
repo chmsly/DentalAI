@@ -1,4 +1,5 @@
 import React from 'react';
+import ImageGallery from 'react-image-gallery';
 
 class PatientDashboard extends React.Component {
   constructor(props) {
@@ -19,6 +20,10 @@ class PatientDashboard extends React.Component {
     this.handlePatientSelect = this.handlePatientSelect.bind(this);
   }
 
+  handleSearchChange(event) {
+    this.setState({searchTerm: event.target.value});
+  }
+
   handleSearchSubmit(event) {
     event.preventDefault();
     this.setState({isLoading: true});
@@ -27,19 +32,10 @@ class PatientDashboard extends React.Component {
       .catch(error => this.setState({error, isLoading: false}));
   }
 
-  handleSearchSubmit(event) {
-    event.preventDefault();
-    searchPatients(this.state.searchTerm)
-      .then(patients => this.setState({patients}))
-      .catch(error => console.error(error));
+  handlePatientSelect(patient) {
+    this.setState({selectedPatient: patient});
   }
 
-  handlePatientSelect(patient) {
-    fetchPatientDetails(patient.id)
-      .then(details => this.setState({selectedPatient: {...patient, details}}))
-      .catch(error => console.error(error));
-  }
-  
   render() {
     const { searchTerm, patients, selectedPatient, currentPage, patientsPerPage, sortField, isLoading, error } = this.state;
     const indexOfLastPatient = currentPage * patientsPerPage;
@@ -53,6 +49,11 @@ class PatientDashboard extends React.Component {
     if (error) {
       return <div>Error: {error.message}</div>;
     }
+
+    const images = selectedPatient ? selectedPatient.xrayImages.map(imageUrl => ({
+      original: imageUrl,
+      thumbnail: imageUrl,
+    })) : [];
 
     return (
       <div>
@@ -70,22 +71,10 @@ class PatientDashboard extends React.Component {
             </li>
           ))}
         </ul>
-        <div>
-          {Array(Math.ceil(patients.length / patientsPerPage)).fill().map((_, i) => (
-            <button key={i} onClick={() => this.handlePageChange(i + 1)}>
-              {i + 1}
-            </button>
-          ))}
-        </div>
-        <div>
-          Sort by:
-          <button onClick={() => this.handleSortChange('name')}>Name</button>
-          <button onClick={() => this.handleSortChange('date')}>Date</button>
-        </div>
         {selectedPatient && (
           <div>
             <h2>{selectedPatient.name}'s X-ray History</h2>
-            {/* Display the selected patient's X-ray history here */}
+            <ImageGallery items={images} />
           </div>
         )}
       </div>
