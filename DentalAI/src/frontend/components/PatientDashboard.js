@@ -53,26 +53,38 @@ class PatientDashboard extends React.Component {
     if (error) {
       return <div>Error: {error.message}</div>;
     }
-    
+
     return (
       <div>
         <form onSubmit={this.handleSearchSubmit}>
           <label>
             Search Patients:
-            <input type="text" value={this.state.searchTerm} onChange={this.handleSearchChange} />
+            <input type="text" value={searchTerm} onChange={this.handleSearchChange} />
           </label>
           <input type="submit" value="Search" />
         </form>
         <ul>
-          {this.state.patients.map(patient => (
+          {currentPatients.sort((a, b) => a[sortField] > b[sortField] ? 1 : -1).map(patient => (
             <li key={patient.id} onClick={() => this.handlePatientSelect(patient)}>
               {patient.name}
             </li>
           ))}
         </ul>
-        {this.state.selectedPatient && (
+        <div>
+          {Array(Math.ceil(patients.length / patientsPerPage)).fill().map((_, i) => (
+            <button key={i} onClick={() => this.handlePageChange(i + 1)}>
+              {i + 1}
+            </button>
+          ))}
+        </div>
+        <div>
+          Sort by:
+          <button onClick={() => this.handleSortChange('name')}>Name</button>
+          <button onClick={() => this.handleSortChange('date')}>Date</button>
+        </div>
+        {selectedPatient && (
           <div>
-            <h2>{this.state.selectedPatient.name}'s X-ray History</h2>
+            <h2>{selectedPatient.name}'s X-ray History</h2>
             {/* Display the selected patient's X-ray history here */}
           </div>
         )}
