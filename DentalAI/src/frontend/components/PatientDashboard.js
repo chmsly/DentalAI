@@ -41,6 +41,19 @@ class PatientDashboard extends React.Component {
   }
   
   render() {
+    const { searchTerm, patients, selectedPatient, currentPage, patientsPerPage, sortField, isLoading, error } = this.state;
+    const indexOfLastPatient = currentPage * patientsPerPage;
+    const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
+    const currentPatients = patients.slice(indexOfFirstPatient, indexOfLastPatient);
+
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
+
+    if (error) {
+      return <div>Error: {error.message}</div>;
+    }
+    
     return (
       <div>
         <form onSubmit={this.handleSearchSubmit}>
