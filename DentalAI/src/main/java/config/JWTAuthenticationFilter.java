@@ -15,12 +15,13 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         this.authenticationManager = authenticationManager;
     }
 
+    
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws AuthenticationException {
+    public org.springframework.security.core.Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) throws org.springframework.security.core.AuthenticationException {
         try {
-            User creds = new ObjectMapper().readValue(req.getInputStream(), User.class);
+            com.example.dentalai.model.User creds = new ObjectMapper().readValue(req.getInputStream(), com.example.dentalai.model.User.class);
             return authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(), new ArrayList<>())
+                    new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword(), new java.util.ArrayList<>())
             );
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -28,11 +29,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain, Authentication auth) throws IOException, ServletException {
-        String token = Jwts.builder()
+    protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, jakarta.servlet.FilterChain chain, org.springframework.security.core.Authentication auth) throws IOException, jakarta.servlet.ServletException {
+        String token = io.jsonwebtoken.Jwts.builder()
                 .setSubject(((org.springframework.security.core.userdetails.User) auth.getPrincipal()).getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + 864_000_000))
-                .signWith(SignatureAlgorithm.HS512, "SecretKeyToGenJWTs".getBytes())
+                .setExpiration(new java.util.Date(System.currentTimeMillis() + 864_000_000))
+                .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, "SecretKeyToGenJWTs".getBytes())
                 .compact();
         res.addHeader("Authorization", "Bearer " + token);
     }
