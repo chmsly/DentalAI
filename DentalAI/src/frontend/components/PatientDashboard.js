@@ -19,7 +19,7 @@ class PatientDashboard extends React.Component {
     this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
     this.handlePatientSelect = this.handlePatientSelect.bind(this);
   }
-
+  
   handleSearchChange(event) {
     this.setState({searchTerm: event.target.value});
   }
@@ -27,6 +27,7 @@ class PatientDashboard extends React.Component {
   handleSearchSubmit(event) {
     event.preventDefault();
     this.setState({isLoading: true});
+    // Assuming searchPatients is imported or defined elsewhere
     searchPatients(this.state.searchTerm)
       .then(patients => this.setState({patients, isLoading: false}))
       .catch(error => this.setState({error, isLoading: false}));
@@ -50,7 +51,7 @@ class PatientDashboard extends React.Component {
       return <div>Error: {error.message}</div>;
     }
 
-    const images = selectedPatient ? selectedPatient.xrayImages.map(imageUrl => ({
+    const images = selectedPatient && selectedPatient.xrayImages ? selectedPatient.xrayImages.map(imageUrl => ({
       original: imageUrl,
       thumbnail: imageUrl,
     })) : [];
@@ -65,7 +66,7 @@ class PatientDashboard extends React.Component {
           <input type="submit" value="Search" />
         </form>
         <ul>
-          {currentPatients.sort((a, b) => a[sortField] > b[sortField] ? 1 : -1).map(patient => (
+          {currentPatients.sort((a, b) => (a[sortField] || '').localeCompare(b[sortField] || '')).map(patient => (
             <li key={patient.id} onClick={() => this.handlePatientSelect(patient)}>
               {patient.name}
             </li>
@@ -79,6 +80,17 @@ class PatientDashboard extends React.Component {
         )}
       </div>
     );
+  }
+}
+
+import React, { Component } from 'react';
+import ImageGallery from 'react-image-gallery';
+
+class PatientDashboard extends Component {
+  // ... (rest of the component code)
+
+  render() {
+    // ... (render method implementation)
   }
 }
 
