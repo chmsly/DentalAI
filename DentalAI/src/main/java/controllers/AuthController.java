@@ -30,11 +30,11 @@ public class AuthController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JwtUtils jwtUtils;
+    private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
-        if (userService.existsByUsername(user.getUsername())) {
+        if (userService.findByUsername(user.getUsername()) != null) {
             return ResponseEntity.badRequest().body("Username is already taken");
         }
 
@@ -51,7 +51,7 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = jwtUtils.generateToken(authentication.getName());
+        String jwt = jwtTokenProvider.generateToken(authentication);
         Map<String, String> response = new HashMap<>();
         response.put("token", jwt);
         return ResponseEntity.ok(response);
