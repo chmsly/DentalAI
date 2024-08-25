@@ -10,23 +10,23 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody User user) {
-        userRepository.save(user);
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
+        User savedUser = userService.saveUser(user);
         return ResponseEntity.ok("User registered successfully");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
-        // Authentication logic
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+        // Authentication logic should be handled in AuthController
         return ResponseEntity.ok("User logged in successfully");
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@RequestBody LogoutRequest logoutRequest) {
-        // Logout logic
+    public ResponseEntity<?> logoutUser() {
+        // Logout logic should be handled in AuthController
         return ResponseEntity.ok("User logged out successfully");
     }
 }
