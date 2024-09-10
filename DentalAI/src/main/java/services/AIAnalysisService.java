@@ -38,20 +38,22 @@ public class AIAnalysisService {
         }
     }
 
-    private BufferedImage preprocessImage(MultipartFile xrayImage) {
-        // Image preprocessing logic
+    private BufferedImage preprocessImage(MultipartFile xrayImage) throws IOException {
+        return ImageIO.read(xrayImage.getInputStream());
     }
 
     private AIModelResult runAIModel(BufferedImage processedImage) {
-        // AI model execution logic
+        return aiModelService.analyzeImage(processedImage);
     }
 
     private ComparisonResult compareResults(AIModelResult aiResult, String dentistDiagnosis) {
-        // Comparison logic
+        // Implementation details...
+        return new ComparisonResult(/* ... */);
     }
 
     private AnalysisReport generateReport(ComparisonResult comparison, String userId, String originalFilename) {
-        // Report generation logic
+        // Implementation details...
+        return new AnalysisReport(/* ... */);
     }
 
     private void saveAnalysisResult(AnalysisReport report) throws AnalysisException {
@@ -63,6 +65,7 @@ public class AIAnalysisService {
     }
 
     private BufferedImage generateHeatmap(BufferedImage originalImage, AIModelResult aiResult) {
-        // Heatmap generation logic
+        // Implementation details...
+        return originalImage;
     }
 }
