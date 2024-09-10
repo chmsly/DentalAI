@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/xray-analysis")
@@ -47,6 +46,5 @@ public class XrayAnalysisController {
         if (!file.getContentType().startsWith("image/")) {
             throw new InvalidInputException("Uploaded file is not an image");
         }
-        
     }
 }
