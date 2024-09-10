@@ -1,28 +1,41 @@
 package com.example.dentalxray.service;
 
+import com.example.dentalxray.model.*;
+import com.example.dentalxray.repository.AnalysisReportRepository;
+import com.example.dentalxray.exception.AnalysisException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class AIAnalysisService {
 
-    public AnalysisResult analyzeXray(MultipartFile xrayImage, String dentistDiagnosis) {
-        // Preprocess the image
-        BufferedImage processedImage = preprocessImage(xrayImage);
+    @Autowired
+    private AIModelService aiModelService;
 
-        // Run AI model analysis
-        AIModelResult aiResult = runAIModel(processedImage);
+    @Autowired
+    private AnalysisReportRepository analysisReportRepository;
 
-        // Compare AI result with dentist's diagnosis
-        ComparisonResult comparison = compareResults(aiResult, dentistDiagnosis);
-
-        // Generate report
-        AnalysisReport report = generateReport(comparison);
-
-        // Save results to database
-        saveAnalysisResult(report);
-
-        return new AnalysisResult(report, generateHeatmap(processedImage, aiResult));
+    public AnalysisResult analyzeXray(MultipartFile xrayImage, String dentistDiagnosis, String userId) throws AnalysisException {
+        try {
+            BufferedImage processedImage = preprocessImage(xrayImage);
+            AIModelResult aiResult = runAIModel(processedImage);
+            ComparisonResult comparison = compareResults(aiResult, dentistDiagnosis);
+            AnalysisReport report = generateReport(comparison, userId, xrayImage.getOriginalFilename());
+            saveAnalysisResult(report);
+            return new AnalysisResult(report, generateHeatmap(processedImage, aiResult));
+        } catch (IOException e) {
+            throw new AnalysisException("Error processing X-ray image", e);
+        } catch (Exception e) {
+            throw new AnalysisException("Error during X-ray analysis", e);
+        }
     }
 
     private BufferedImage preprocessImage(MultipartFile xrayImage) {
@@ -37,12 +50,16 @@ public class AIAnalysisService {
         // Comparison logic
     }
 
-    private AnalysisReport generateReport(ComparisonResult comparison) {
+    private AnalysisReport generateReport(ComparisonResult comparison, String userId, String originalFilename) {
         // Report generation logic
     }
 
-    private void saveAnalysisResult(AnalysisReport report) {
-        // Database saving logic
+    private void saveAnalysisResult(AnalysisReport report) throws AnalysisException {
+        try {
+            analysisReportRepository.save(report);
+        } catch (Exception e) {
+            throw new AnalysisException("Error saving analysis report", e);
+        }
     }
 
     private BufferedImage generateHeatmap(BufferedImage originalImage, AIModelResult aiResult) {
