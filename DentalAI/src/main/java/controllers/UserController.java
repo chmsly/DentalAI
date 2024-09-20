@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -14,8 +14,12 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
-        User savedUser = userService.saveUser(user);
-        return ResponseEntity.ok("User registered successfully");
+        try {
+            User savedUser = userService.saveUser(user);
+            return ResponseEntity.ok(savedUser);
+        } catch (Exception e) {
+            throw new CustomException("Error registering user: " + e.getMessage());
+        }
     }
 
     @PostMapping("/login")
@@ -26,7 +30,11 @@ public class UserController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser() {
-        // Logout logic should be handled in AuthController
-        return ResponseEntity.ok("User logged out successfully");
+        try {
+            // Implement logout logic here if needed
+            return ResponseEntity.ok("User logged out successfully");
+        } catch (Exception e) {
+            throw new CustomException("Error logging out user: " + e.getMessage());
+        }
     }
 }
