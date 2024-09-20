@@ -34,13 +34,14 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
-        if (userService.findByUsername(user.getUsername()) != null) {
-            return ResponseEntity.badRequest().body("Username is already taken");
+        try {
+            User registeredUser = userService.registerUser(user);
+            return ResponseEntity.ok(registeredUser);
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new CustomException("Error registering user: " + e.getMessage());
         }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = userService.saveUser(user);
-        return ResponseEntity.ok("User registered successfully");
     }
 
     @PostMapping("/login")
