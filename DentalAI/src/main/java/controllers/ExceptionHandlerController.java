@@ -20,38 +20,50 @@ public class ExceptionHandlerController {
     private static final Logger logger = LoggerFactory.getLogger(ExceptionHandlerController.class);
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<String> handleCustomException(CustomException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleCustomException(CustomException ex) {
+        logger.error("Custom exception occurred: ", ex);
+        ErrorResponse error = new ErrorResponse("Custom Error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidInputException.class)
-    public ResponseEntity<String> handleInvalidInputException(InvalidInputException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleInvalidInputException(InvalidInputException ex) {
+        logger.error("Invalid input exception occurred: ", ex);
+        ErrorResponse error = new ErrorResponse("Invalid Input", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(AnalysisException.class)
-    public ResponseEntity<String> handleAnalysisException(AnalysisException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorResponse> handleAnalysisException(AnalysisException ex) {
+        logger.error("Analysis exception occurred: ", ex);
+        ErrorResponse error = new ErrorResponse("Analysis Error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleException(Exception ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        logger.error("Unexpected exception occurred: ", ex);
+        ErrorResponse error = new ErrorResponse("Internal Server Error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        logger.error("Validation exception occurred: ", ex);
         StringBuilder errors = new StringBuilder();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.append(fieldName).append(": ").append(errorMessage).append("; ");
         });
-        return new ResponseEntity<>(errors.toString(), HttpStatus.BAD_REQUEST);
+        ErrorResponse error = new ErrorResponse("Validation Error", errors.toString());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+        logger.error("Constraint violation exception occurred: ", ex);
+        ErrorResponse error = new ErrorResponse("Constraint Violation", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
