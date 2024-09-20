@@ -1,25 +1,33 @@
 package com.example.dentalxray.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
-@DynamoDBTable(tableName = "User")
+@Entity
+@Table(name = "users")
 public class User {
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @NotBlank
+    @Column(unique = true)
     private String username;
+
+    @NotBlank
     private String password;
 
-    @DynamoDBHashKey(attributeName = "id")
-    public String getId() {
+    @NotBlank
+    private String role;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    @DynamoDBAttribute(attributeName = "username")
     public String getUsername() {
         return username;
     }
@@ -28,7 +36,6 @@ public class User {
         this.username = username;
     }
 
-    @DynamoDBAttribute(attributeName = "password")
     public String getPassword() {
         return password;
     }
@@ -37,9 +44,13 @@ public class User {
         this.password = password;
     }
 
-    public User(String id, String username, String password) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
+    public String getRole() {
+        return role;
     }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    
 }
