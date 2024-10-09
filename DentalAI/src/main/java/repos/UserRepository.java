@@ -1,9 +1,8 @@
-package com.example.dentalxray.repository;
+package com.dentalai.repository;
 
-import com.example.dentalxray.model.User;
-import org.springframework.data.repository.CrudRepository;
-import java.util.Optional;
+import com.dentalai.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends CrudRepository<User, String> {
-    Optional<User> findByUsername(String username);
+public interface UserRepository extends JpaRepository<User, Long> {
+    User findByUsername(String username);
 }
