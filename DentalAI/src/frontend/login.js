@@ -1,38 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 
-class Login extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {username: '', password: ''};
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('/api/auth/login', { username, password });
+      const token = response.data.token;
+      // Store the token in localStorage or a state management solution
+      localStorage.setItem('token', token);
+      // Redirect to dashboard or home page
+    } catch (error) {
+      console.error('Login failed:', error);
+      // Handle login error (show message to user)
+    }
+  };
 
-  handleChange(event) {
-    this.setState({[event.target.name]: event.target.value});
-  }
-
-  handleSubmit(event) {
-    event.preventDefault();
-    // Handle form submission logic here
-  }
-
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Username:
-          <input type="text" name="username" onChange={this.handleChange} />
-        </label>
-        <label>
-          Password:
-          <input type="password" name="password" onChange={this.handleChange} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-    );
-  }
-}
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        placeholder="Username"
+        required
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Password"
+        required
+      />
+      <button type="submit">Login</button>
+    </form>
+  );
+};
 
 export default Login;
