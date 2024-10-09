@@ -1,29 +1,24 @@
+package com.dentalai.config;
+
+import com.dentalai.security.JWTAuthenticationFilter;
+import com.dentalai.security.JWTAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeHttpRequests(authz -> authz
-                    .requestMatchers("/api/login", "/api/register").permitAll()
-                    .anyRequest().authenticated()
-                )
-                .addFilter(new JWTAuthenticationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))))
-                .addFilterBefore(new JWTAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))), UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -32,20 +27,16 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.builder()
-            .username("user")
-            .password(passwordEncoder().encode("password"))
-            .roles("USER")
-            .build();
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
+        http.csrf().disable()
+            .authorizeRequests()
+            .antMatchers("/api/public/**").permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .addFilter(new JWTAuthenticationFilter(authenticationManager))
+            .addFilter(new JWTAuthorizationFilter(authenticationManager))
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        return new InMemoryUserDetailsManager(user);
+        return http.build();
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    
 }
