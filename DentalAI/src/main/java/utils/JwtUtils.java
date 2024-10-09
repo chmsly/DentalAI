@@ -1,5 +1,6 @@
-package com.example.dentalxray.util;
+package com.dentalai.util;
 
+import com.dentalai.security.SecurityConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -9,20 +10,18 @@ import java.util.Date;
 
 @Component
 public class JwtUtils {
-    private String secretKey = "SecretKeyToGenJWTs";
-    private long expirationTime = 864_000_000; // 10 days
 
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(SignatureAlgorithm.HS512, secretKey.getBytes())
+                .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET.getBytes())
                 .compact();
     }
 
     public Claims getClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(secretKey.getBytes())
+                .setSigningKey(SecurityConstants.SECRET.getBytes())
                 .parseClaimsJws(token)
                 .getBody();
     }

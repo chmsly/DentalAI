@@ -1,18 +1,21 @@
-package com.example.dentalxray.controller;
+package com.dentalai.controller;
 
-import com.example.dentalxray.exception.CustomException;
-import com.example.dentalxray.exception.InvalidInputException;
-import com.example.dentalxray.exception.AnalysisException;
+import com.dentalai.exception.CustomException;
+import com.dentalai.exception.InvalidInputException;
+import com.dentalai.exception.AnalysisException;
+import com.dentalai.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.validation.FieldError;
-import javax.validation.ConstraintViolationException;
-import com.example.dentalxray.dto.ErrorResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class ExceptionHandlerController {
@@ -43,21 +46,19 @@ public class ExceptionHandlerController {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         logger.error("Unexpected exception occurred: ", ex);
-        ErrorResponse error = new ErrorResponse("Internal Server Error", ex.getMessage());
+        ErrorResponse error = new ErrorResponse("Internal Server Error", "An unexpected error occurred");
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        logger.error("Validation exception occurred: ", ex);
-        StringBuilder errors = new StringBuilder();
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            errors.append(fieldName).append(": ").append(errorMessage).append("; ");
+            errors.put(fieldName, errorMessage);
         });
-        ErrorResponse error = new ErrorResponse("Validation Error", errors.toString());
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

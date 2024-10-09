@@ -1,8 +1,8 @@
-package com.example.dentalxray.service;
+package com.dentalai.service;
 
-import com.example.dentalxray.model.User;
-import com.example.dentalxray.repository.UserRepository;
-import com.example.dentalxray.exception.CustomException;
+import com.dentalai.model.User;
+import com.dentalai.repository.UserRepository;
+import com.dentalai.exception.CustomException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,7 @@ public class UserService {
             .orElseThrow(() -> new CustomException("User not found"));
     }
 
-    public User findById(String id) {
+    public User findById(Long id) {
         return userRepository.findById(id)
             .orElseThrow(() -> new CustomException("User not found"));
     }

@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 @RestController
 @RequestMapping("/api/users")
@@ -55,17 +56,15 @@ public class UserController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable("id") String id) {
-        try {
-            User user = userService.findById(id);
-            if (user == null) {
-                throw new CustomException("User not found");
-            }
-            return ResponseEntity.ok(user);
-        } catch (CustomException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new CustomException("Error fetching user: " + e.getMessage());
-        }
+    public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+        User user = userService.findById(id);
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
+        User user = userService.findById(id);
+        userService.deleteUser(user);
+        return ResponseEntity.noContent().build();
     }
 }

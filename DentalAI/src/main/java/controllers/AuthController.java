@@ -1,18 +1,19 @@
-package com.example.dentalxray.controller;
+package com.dentalai.controller;
 
-import com.example.dentalxray.model.User;
-import com.example.dentalxray.service.UserService;
-import com.example.dentalxray.security.JwtTokenProvider;
+import com.dentalai.model.User;
+import com.dentalai.service.UserService;
+import com.dentalai.security.JwtTokenProvider;
+import com.dentalai.dto.LoginRequest;
+import com.dentalai.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,21 +28,12 @@ public class AuthController {
     private UserService userService;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
-        try {
-            User registeredUser = userService.registerUser(user);
-            return ResponseEntity.ok(registeredUser);
-        } catch (CustomException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new CustomException("Error registering user: " + e.getMessage());
-        }
+        User registeredUser = userService.registerUser(user);
+        return ResponseEntity.ok(registeredUser);
     }
 
     @PostMapping("/login")
@@ -62,14 +54,5 @@ public class AuthController {
     public ResponseEntity<?> logoutUser() {
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("User logged out successfully");
-    }
-
-    @GetMapping("/user/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable("id") String id) {
-        User user = userService.findById(id);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(user);
     }
 }

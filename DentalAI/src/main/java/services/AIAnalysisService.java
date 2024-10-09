@@ -1,8 +1,8 @@
-package com.example.dentalxray.service;
+package com.dentalai.service;
 
-import com.example.dentalxray.model.*;
-import com.example.dentalxray.repository.AnalysisReportRepository;
-import com.example.dentalxray.exception.AnalysisException;
+import com.dentalai.model.*;
+import com.dentalai.repository.AnalysisReportRepository;
+import com.dentalai.exception.AnalysisException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,23 +38,8 @@ public class AIAnalysisService {
         }
     }
 
-    private BufferedImage preprocessImage(MultipartFile xrayImage) throws IOException {
-        return ImageIO.read(xrayImage.getInputStream());
-    }
-
-    private AIModelResult runAIModel(BufferedImage processedImage) {
-        return aiModelService.analyzeImage(processedImage);
-    }
-
-    private ComparisonResult compareResults(AIModelResult aiResult, String dentistDiagnosis) {
-        // Implementation details...
-        return new ComparisonResult(/* ... */);
-    }
-
-    private AnalysisReport generateReport(ComparisonResult comparison, String userId, String originalFilename) {
-        // Implementation details...
-        return new AnalysisReport(/* ... */);
-    }
+    // Implement other methods (preprocessImage, runAIModel, compareResults, generateReport, generateHeatmap)
+    // ...
 
     private void saveAnalysisResult(AnalysisReport report) throws AnalysisException {
         try {
@@ -64,8 +49,32 @@ public class AIAnalysisService {
         }
     }
 
-    private BufferedImage generateHeatmap(BufferedImage originalImage, AIModelResult aiResult) {
-        // Implementation details...
-        return originalImage;
+    private double calculateAgreementScore(List<Anomaly> aiAnomalies, List<Anomaly> dentistAnomalies) {
+        int matchingAnomalies = 0;
+        for (Anomaly aiAnomaly : aiAnomalies) {
+            if (dentistAnomalies.contains(aiAnomaly)) {
+                matchingAnomalies++;
+            }
+        }
+        return (double) matchingAnomalies / Math.max(aiAnomalies.size(), dentistAnomalies.size());
+    }
+
+    private String generateRecommendations(ComparisonResult comparison) {
+        StringBuilder recommendations = new StringBuilder();
+        if (comparison.getMissedAnomalies().isEmpty() && comparison.getFalsePositives().isEmpty()) {
+            recommendations.append("AI and dentist diagnoses align well. No specific recommendations.");
+        } else {
+            if (!comparison.getMissedAnomalies().isEmpty()) {
+                recommendations.append("Please review these missed anomalies: ")
+                               .append(String.join(", ", comparison.getMissedAnomalies()))
+                               .append(". ");
+            }
+            if (!comparison.getFalsePositives().isEmpty()) {
+                recommendations.append("The AI may have incorrectly identified these as anomalies: ")
+                               .append(String.join(", ", comparison.getFalsePositives()))
+                               .append(". ");
+            }
+        }
+        return recommendations.toString();
     }
 }
