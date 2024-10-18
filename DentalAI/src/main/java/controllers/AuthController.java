@@ -4,7 +4,6 @@ import com.dentalai.model.User;
 import com.dentalai.service.UserService;
 import com.dentalai.security.JwtTokenProvider;
 import com.dentalai.dto.LoginRequest;
-import com.dentalai.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Map<String, String>> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
@@ -51,7 +50,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser() {
+    public ResponseEntity<String> logoutUser() {
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok("User logged out successfully");
     }
