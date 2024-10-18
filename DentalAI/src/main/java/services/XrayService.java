@@ -1,8 +1,8 @@
-package com.example.dentalxray.service;
+package com.dentalai.service;
 
-import com.example.dentalxray.model.*;
-import com.example.dentalxray.repository.AnalysisReportRepository;
-import com.example.dentalxray.exception.AnalysisException;
+import com.dentalai.model.*;
+import com.dentalai.repository.AnalysisReportRepository;
+import com.dentalai.exception.AnalysisException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class AIAnalysisService {
+public class XrayService {
 
     @Autowired
     private AIModelService aiModelService;
