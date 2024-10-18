@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class AIAnalysisService {
@@ -38,8 +39,68 @@ public class AIAnalysisService {
         }
     }
 
-    // Implement other methods (preprocessImage, runAIModel, compareResults, generateReport, generateHeatmap)
-    // ...
+    private BufferedImage preprocessImage(MultipartFile xrayImage) throws IOException {
+        BufferedImage originalImage = ImageIO.read(xrayImage.getInputStream());
+        // Apply preprocessing techniques (e.g., noise reduction, contrast enhancement)
+        // For simplicity, we're returning the original image
+        return originalImage;
+    }
+
+    private AIModelResult runAIModel(BufferedImage processedImage) {
+        return aiModelService.analyzeImage(processedImage);
+    }
+
+    private ComparisonResult compareResults(AIModelResult aiResult, String dentistDiagnosis) {
+        List<Anomaly> dentistAnomalies = parseDentistDiagnosis(dentistDiagnosis);
+        List<Anomaly> missedAnomalies = findMissedAnomalies(aiResult.getDetectedAnomalies(), dentistAnomalies);
+        double agreementScore = calculateAgreementScore(aiResult.getDetectedAnomalies(), dentistAnomalies);
+        
+        return new ComparisonResult(aiResult.getDetectedAnomalies(), dentistAnomalies, missedAnomalies, agreementScore);
+    }
+
+    private List<Anomaly> parseDentistDiagnosis(String dentistDiagnosis) {
+        // Parse the dentist's diagnosis string and convert it to a list of Anomaly objects
+        // This is a simplified implementation
+        return List.of(new Anomaly("Sample Anomaly", "Sample Location"));
+    }
+
+    private List<Anomaly> findMissedAnomalies(List<Anomaly> aiAnomalies, List<Anomaly> dentistAnomalies) {
+        return dentistAnomalies.stream()
+                .filter(dentistAnomaly -> !aiAnomalies.contains(dentistAnomaly))
+                .collect(Collectors.toList());
+    }
+
+    private double calculateAgreementScore(List<Anomaly> aiAnomalies, List<Anomaly> dentistAnomalies) {
+        int matchingAnomalies = (int) aiAnomalies.stream()
+                .filter(dentistAnomalies::contains)
+                .count();
+        return (double) matchingAnomalies / Math.max(aiAnomalies.size(), dentistAnomalies.size());
+    }
+
+    private AnalysisReport generateReport(ComparisonResult comparison, String userId, String xrayFileName) {
+        String recommendations = generateRecommendations(comparison);
+        return new AnalysisReport(
+            UUID.randomUUID().toString(),
+            xrayFileName,
+            userId,
+            comparison,
+            LocalDateTime.now(),
+            recommendations
+        );
+    }
+
+    private String generateRecommendations(ComparisonResult comparison) {
+        StringBuilder recommendations = new StringBuilder();
+        if (comparison.getMissedAnomalies().isEmpty()) {
+            recommendations.append("AI analysis aligns well with the dentist's diagnosis. ");
+        } else {
+            recommendations.append("Please review the following missed anomalies: ");
+            comparison.getMissedAnomalies().forEach(anomaly -> 
+                recommendations.append(anomaly.getDescription()).append(" at ").append(anomaly.getLocation()).append(". "));
+        }
+        recommendations.append("Agreement score: ").append(String.format("%.2f", comparison.getAgreementScore()));
+        return recommendations.toString();
+    }
 
     private void saveAnalysisResult(AnalysisReport report) throws AnalysisException {
         try {
@@ -49,32 +110,9 @@ public class AIAnalysisService {
         }
     }
 
-    private double calculateAgreementScore(List<Anomaly> aiAnomalies, List<Anomaly> dentistAnomalies) {
-        int matchingAnomalies = 0;
-        for (Anomaly aiAnomaly : aiAnomalies) {
-            if (dentistAnomalies.contains(aiAnomaly)) {
-                matchingAnomalies++;
-            }
-        }
-        return (double) matchingAnomalies / Math.max(aiAnomalies.size(), dentistAnomalies.size());
-    }
-
-    private String generateRecommendations(ComparisonResult comparison) {
-        StringBuilder recommendations = new StringBuilder();
-        if (comparison.getMissedAnomalies().isEmpty() && comparison.getFalsePositives().isEmpty()) {
-            recommendations.append("AI and dentist diagnoses align well. No specific recommendations.");
-        } else {
-            if (!comparison.getMissedAnomalies().isEmpty()) {
-                recommendations.append("Please review these missed anomalies: ")
-                               .append(String.join(", ", comparison.getMissedAnomalies()))
-                               .append(". ");
-            }
-            if (!comparison.getFalsePositives().isEmpty()) {
-                recommendations.append("The AI may have incorrectly identified these as anomalies: ")
-                               .append(String.join(", ", comparison.getFalsePositives()))
-                               .append(". ");
-            }
-        }
-        return recommendations.toString();
+    private BufferedImage generateHeatmap(BufferedImage processedImage, AIModelResult aiResult) {
+        // Implement heatmap generation logic
+        // This is a placeholder implementation
+        return processedImage;
     }
 }
