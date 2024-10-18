@@ -1,7 +1,9 @@
 package com.dentalai.controller;
 
 import com.dentalai.service.AIAnalysisService;
-import com.dentalai.model.AnalysisReport;
+import com.dentalai.model.AnalysisResult;
+import com.dentalai.exception.AnalysisException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,10 +18,11 @@ public class XrayAnalysisController {
     }
 
     @PostMapping("/analyze")
-    public ResponseEntity<AnalysisReport> analyzeXray(@RequestParam("file") MultipartFile file,
-                                                  @RequestParam("dentistDiagnosis") String dentistDiagnosis,
-                                                  @RequestParam("userId") String userId) throws AnalysisException {
+    public ResponseEntity<AnalysisResult> analyzeXray(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("dentistDiagnosis") String dentistDiagnosis,
+            @RequestParam("userId") String userId) throws AnalysisException {
         AnalysisResult result = aiAnalysisService.analyzeXray(file, dentistDiagnosis, userId);
-        return ResponseEntity.ok(result.getReport());
+        return ResponseEntity.ok(result);
     }
 }
