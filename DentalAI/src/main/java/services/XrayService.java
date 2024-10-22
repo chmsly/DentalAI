@@ -1,4 +1,4 @@
-package com.dentalai.service;
+package com.dentalai.services;
 
 import com.dentalai.model.*;
 import com.dentalai.repository.AnalysisReportRepository;

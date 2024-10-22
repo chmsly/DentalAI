@@ -1,6 +1,6 @@
-package controllers;
+package com.dentalai.controllers;
 
-import services.AIAnalysisService;
+import com.dentalai.services.AIAnalysisService;
 import com.dentalai.model.AnalysisResult;
 import com.dentalai.exception.AnalysisException;
 import org.springframework.http.ResponseEntity;

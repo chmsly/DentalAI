@@ -1,4 +1,4 @@
-package com.example.dentalxray.exception;
+package com.dentalai.exception;
 
 public class CustomException extends RuntimeException {
     public CustomException(String message) {

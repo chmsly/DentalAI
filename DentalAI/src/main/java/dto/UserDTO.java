@@ -1,4 +1,4 @@
-package com.example.dentalxray.dto;
+package com.dentalai.dto;
 
 public class UserDTO {
     private String username;

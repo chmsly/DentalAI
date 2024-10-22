@@ -1,4 +1,4 @@
-package services;
+package com.dentalai.services;
 
 import com.dentalai.model.AIModelResult;
 import com.dentalai.model.AnalysisReport;

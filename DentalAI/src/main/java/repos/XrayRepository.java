@@ -1,6 +1,6 @@
-package com.example.dentalxray.repository;
+package com.dentalai.repository;
 
-import com.example.dentalxray.model.XrayImage;
+import com.dentalai.model.XrayImage;
 import org.socialsignin.spring.data.dynamodb.repository.EnableScan;
 import org.springframework.data.repository.CrudRepository;
 

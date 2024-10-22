@@ -1,4 +1,4 @@
-package controllers;
+package com.dentalai.controllers;
 
 import com.dentalai.model.User;
 import com.dentalai.service.UserService;

@@ -1,4 +1,4 @@
-package com.example.dentalxray.model;
+package com.dentalai.model;
 
 import java.awt.image.BufferedImage;
 

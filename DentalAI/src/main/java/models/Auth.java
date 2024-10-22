@@ -1,4 +1,4 @@
-package com.example.dentalxray.model;
+package com.dentalai.model;
 
 public class Auth {
     private String username;
