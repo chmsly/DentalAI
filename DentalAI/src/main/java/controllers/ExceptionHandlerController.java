@@ -1,4 +1,4 @@
-package com.dentalai.controller;
+package controllers;
 
 import com.dentalai.exception.CustomException;
 import com.dentalai.exception.InvalidInputException;
