@@ -1,10 +1,6 @@
 package com.dentalai.services;
 
-import com.dentalai.model.AIModelResult;
-import com.dentalai.model.AnalysisReport;
-import com.dentalai.model.AnalysisResult;
-import com.dentalai.model.Anomaly;
-import com.dentalai.model.ComparisonResult;
+import com.dentalai.model.*;
 import com.dentalai.repository.AnalysisReportRepository;
 import com.dentalai.exception.AnalysisException;
 import org.springframework.beans.factory.annotation.Autowired;
