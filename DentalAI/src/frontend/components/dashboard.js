@@ -1,34 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 
-class Dashboard extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {file: null};
+const Dashboard = () => {
+  const [file, setFile] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
-    this.handleFileChange = this.handleFileChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
 
-  handleFileChange(event) {
-    this.setState({file: event.target.files[0]});
-  }
-
-  handleSubmit(event) {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle file upload and comparison logic here
-  }
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('dentistDiagnosis', 'Sample diagnosis'); // Replace with actual diagnosis input
+    formData.append('userId', 'user123'); // Replace with actual user ID
 
-  render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Upload X-ray:
-          <input type="file" onChange={this.handleFileChange} />
-        </label>
-        <input type="submit" value="Submit" />
+    try {
+      const response = await axios.post('/api/xray-analysis/analyze', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      setAnalysisResult(response.data);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
+
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <input type="file" onChange={handleFileChange} />
+        <button type="submit">Analyze X-ray</button>
       </form>
-    );
-  }
-}
+      {analysisResult && (
+        <div>
+          <h2>Analysis Result</h2>
+          <pre>{JSON.stringify(analysisResult, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default Dashboard;
